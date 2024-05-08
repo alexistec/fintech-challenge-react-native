@@ -3,6 +3,8 @@ import React from 'react'
 import { useAssets } from 'expo-asset'
 import { ResizeMode, Video } from 'expo-av'
 import { Link } from 'expo-router'
+import { defaultStyles } from '@/constants/Styles'
+import Colors from '@/constants/Colors'
 
 
 const Page = () => {
@@ -24,9 +26,14 @@ const Page = () => {
         <Text style={styles.header}>Ready to change the way you money?</Text>
       </View>
       <View style={styles.buttons}>
-        <Link href={'/login'} asChild>
+        <Link href={'/login'} style={[defaultStyles.pillButton,{ flex:1, backgroundColor: Colors.dark}]} asChild>
           <TouchableOpacity>
-            <Text style={{ color:'white' }}>Login in</Text>
+            <Text style={{ color:'white', fontSize:22, fontWeight:'500' }}>Log in</Text>
+          </TouchableOpacity>
+        </Link>
+        <Link href={'/signup'} style={[defaultStyles.pillButton,{ flex:1, backgroundColor:'#fff'}]} asChild>
+          <TouchableOpacity>
+            <Text style={{  fontSize:22, fontWeight:'500' }}>Sign up</Text>
           </TouchableOpacity>
         </Link>
       </View>
