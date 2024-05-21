@@ -3,14 +3,14 @@ import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
-import { Link, Stack, useRouter } from 'expo-router';
+import { Link, Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, Text } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as SecureStore from 'expo-secure-store';
-const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY
+const CLERK_PUBLISHABLE_KEY = String(process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY)
 
 
 
@@ -50,15 +50,24 @@ const InitialLayout = () => {
   });
 
   const router = useRouter()
-  const { isSignedIn,isLoaded } = useAuth();
+  const { isLoaded, isSignedIn } = useAuth();
+  const segments = useSegments();
+
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
   }, [error]);
 
-  useEffect(()=>{
-    console.log('isSignedIn alexis',isSignedIn)
-  },[isSignedIn])
+  useEffect(() => {
+    console.log('isSignedIn alexis', isSignedIn)
+
+    const inAuthGroup = segments[0] === '(authenticated)';
+
+    if (true) {
+      router.replace('/(authenticated)/(tabs)/home')
+    }
+
+  }, [])
 
   useEffect(() => {
     if (loaded) {
@@ -66,74 +75,75 @@ const InitialLayout = () => {
     }
   }, [loaded]);
 
-  if (!loaded) {
-    return null;
+  if (!loaded || !isLoaded) {
+    return <Text>Loading...</Text>;
   }
 
-  return( 
+  return (
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen 
-        name="signup" 
-        options={{ 
-          title:'',
-          headerBackTitle:'',
-          headerShadowVisible:false,
-          headerStyle: { backgroundColor: Colors.background }, 
-          headerLeft : () => (
+      <Stack.Screen
+        name="signup"
+        options={{
+          title: '',
+          headerBackTitle: '',
+          headerShadowVisible: false,
+          headerStyle: { backgroundColor: Colors.background },
+          headerLeft: () => (
             <TouchableOpacity onPress={router.back}>
               <Ionicons name='arrow-back' size={34} color={Colors.dark} />
             </TouchableOpacity>
           ),
-        }} 
+        }}
       />
-      <Stack.Screen name="login" 
-        options={{ 
-          title:'',
-          headerBackTitle:'',
-          headerShadowVisible:false,
-          headerStyle: { backgroundColor: Colors.background }, 
-          headerLeft : () => (
+      <Stack.Screen name="login"
+        options={{
+          title: '',
+          headerBackTitle: '',
+          headerShadowVisible: false,
+          headerStyle: { backgroundColor: Colors.background },
+          headerLeft: () => (
             <TouchableOpacity onPress={router.back}>
               <Ionicons name='arrow-back' size={34} color={Colors.dark} />
             </TouchableOpacity>
           ),
-          headerRight : () => (
+          headerRight: () => (
             <Link href={'/help'} asChild>
               <TouchableOpacity>
                 <Ionicons name='help-circle-outline' size={34} color={Colors.dark} />
               </TouchableOpacity>
             </Link>
           ),
-        }} 
+        }}
       />
 
       <Stack.Screen name='help' options={{ title: 'Help', presentation: 'modal' }} />
-      <Stack.Screen 
-        name="verify/[phone]" 
-        options={{ 
-          title:'',
-          headerBackTitle:'',
-          headerShadowVisible:false,
-          headerStyle: { backgroundColor: Colors.background }, 
-          headerLeft : () => (
+      <Stack.Screen
+        name="verify/[phone]"
+        options={{
+          title: '',
+          headerBackTitle: '',
+          headerShadowVisible: false,
+          headerStyle: { backgroundColor: Colors.background },
+          headerLeft: () => (
             <TouchableOpacity onPress={router.back}>
               <Ionicons name='arrow-back' size={34} color={Colors.dark} />
             </TouchableOpacity>
           ),
-        }} 
+        }}
       />
+      <Stack.Screen name="(authenticated)/(tabs)" options={{ headerShown: false }} />i
     </Stack>
   );
 }
 
 const RootLayoutNav = () => {
-
-  return  (
-    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY!} tokenCache={tokenCache}>
+  console.log('CLERK_PUBLISHABLE_KEY', CLERK_PUBLISHABLE_KEY)
+  return (
+    <ClerkProvider tokenCache={tokenCache} publishableKey={CLERK_PUBLISHABLE_KEY}>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <StatusBar style='light' />
-        <InitialLayout/>
+        <InitialLayout />
       </GestureHandlerRootView>
     </ClerkProvider>
   );
