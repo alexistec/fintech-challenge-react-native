@@ -14,6 +14,9 @@ The application includes features such as:
 - **Dashboard**: Overview of the user's financial profile with quick access to the main features of the app.
 - **Profile Management**: Manage user account, security settings, and preferences.
 
+## Screenshots
+
+
 ## Installation
 
 Follow these steps to install and run the project on your local machine:
@@ -21,4 +24,3 @@ Follow these steps to install and run the project on your local machine:
 ```sh
 npm install
 npx expo start
-
